@@ -2,6 +2,7 @@
 	.NOTES
 	===========================================================================
 	 Created on:   	01/24/2023
+	 Last Change:   06/12/2023
 	 Created by:    Noah Huotari
 	 Organization: 	HBS
 	 Filename:     	Palo-USER-ID-Permissions.ps1
@@ -12,12 +13,16 @@
 #>
 
 #SET AD USER INFO HERE
-$domain = "criterion.local"
-$username = "SVC_PA-LDAP"
+$domain = "ad.iseli.com"
+$username = "SVC_PaloAlto"
 
 #dont change anything below here
 $adGroups = "Distributed COM Users","Event Log Readers","Remote Management Users","Server Operators","WinRMRemoteWMIUsers__"
 $fullDN = "$domain"+"\"+"$username"
+
+if (-not(Get-ADGroup -Filter { Name -eq 'WinRMRemoteWMIUsers__' })) {
+ New-ADGroup -GroupScope DomainLocal -GroupCategory Security -Name 'WinRMRemoteWMIUsers__'
+}
 
 #Add user to needed AD Groups
 foreach ($group in $adGroups) {
